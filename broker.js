@@ -4,6 +4,7 @@
 require('dotenv').config(); // Carrega as variáveis do arquivo .env
 const aedes = require('aedes')(); // Cria a instância do Aedes Broker
 const net = require('net'); // Módulo nativo para criar o servidor TCP
+const { Client } = require('pg'); // Cliente PostgreSQL
 
 // 2. CONFIGURAÇÕES
 const HOST = process.env.DNS || '127.0.0.1'; // Pega do .env, ou usa localhost como fallback
@@ -13,6 +14,24 @@ const PORT = parseInt(process.env.PORTA) || 1883; // Porta MQTT padrão
 const USUARIO_REQUERIDO = 'lupa';
 const SENHA_REQUERIDA = 'lupa';
 const TOPICO_MONITORADO = 'teste';
+
+// Configuração do PostgreSQL
+const pgClient = new Client({
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres',
+    host: process.env.DB_HOST || 'postgres',
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_NAME || 'mqtt_db',
+});
+
+// Conecta ao PostgreSQL
+pgClient.connect((err) => {
+    if (err) {
+        console.error('[DB ERROR] Erro ao conectar ao PostgreSQL:', err);
+    } else {
+        console.log('[DB OK] Conectado ao PostgreSQL com sucesso!');
+    }
+});
 
 // 3. LÓGICA DE AUTENTICAÇÃO (Usuario/Senha)
 aedes.authenticate = (client, username, password, callback) => {
@@ -51,6 +70,18 @@ aedes.on('publish', (packet, client) => {
             console.log(`[PUBLICADO] Payload (Mensagem):`, payload);
             console.log(`[PUBLICADO] Cliente Origem: ${client.id}`);
             console.log('----------------------------------------------------');
+
+            // Salva no PostgreSQL
+            const query = 'INSERT INTO mqtt_messages (topic, payload, client_id) VALUES ($1, $2, $3)';
+            const values = [topic, JSON.stringify(payload), client.id];
+
+            pgClient.query(query, values, (err, result) => {
+                if (err) {
+                    console.error('[DB ERROR] Erro ao salvar mensagem:', err);
+                } else {
+                    console.log('[DB OK] Mensagem salva com ID:', result.rows[0]?.id || 'N/A');
+                }
+            });
         } else {
             console.log(`[INFO] Mensagem no tópico não monitorado: ${topic}`);
         }

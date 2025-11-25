@@ -9,9 +9,10 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mqtt_db
     ports:
-      - "5432:5432"
+      - "5435:5432"
     volumes:
-      - postgres_data_mqtt:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -33,4 +34,4 @@ services:
       - ./.env:/app/.env
 
 volumes:
-  postgres_data_mqtt:
+  postgres_data:

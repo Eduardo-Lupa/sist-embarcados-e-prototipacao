@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: mqtt_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mqtt_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_mqtt:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mqtt-broker:
+    build: .
+    container_name: mqtt_broker
+    ports:
+      - "1883:1883"
+    environment:
+      DNS: 0.0.0.0
+      PORTA: 1883
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./.env:/app/.env
+
+volumes:
+  postgres_data_mqtt:

@@ -1,0 +1,25 @@
+{
+  "name": "sist-embarcados-e-prototipacao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eduardo-Lupa/sist-embarcados-e-prototipacao.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Eduardo-Lupa/sist-embarcados-e-prototipacao/issues"
+  },
+  "homepage": "https://github.com/Eduardo-Lupa/sist-embarcados-e-prototipacao#readme",
+  "dependencies": {
+    "aedes": "^0.51.3",
+    "dotenv": "^17.2.3"
+  }
+}

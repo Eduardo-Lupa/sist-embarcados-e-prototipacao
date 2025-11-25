@@ -36,12 +36,19 @@ aedes.on('publish', (packet, client) => {
     // Verifica se a mensagem veio de um cliente (não é interna do Broker)
     if (client) {
         const topic = packet.topic;
-        const payload = packet.payload.toString();
+        const payloadStr = packet.payload.toString();
+        let payload;
+        
+        try {
+            payload = JSON.parse(payloadStr);
+        } catch (e) {
+            payload = payloadStr;
+        }
 
         if (topic === TOPICO_MONITORADO) {
             console.log('----------------------------------------------------');
             console.log(`[PUBLICADO] Tópico: ${topic}`);
-            console.log(`[PUBLICADO] Payload (Mensagem): **${payload}**`);
+            console.log(`[PUBLICADO] Payload (Mensagem):`, payload);
             console.log(`[PUBLICADO] Cliente Origem: ${client.id}`);
             console.log('----------------------------------------------------');
         } else {

@@ -20,6 +20,7 @@
   "homepage": "https://github.com/Eduardo-Lupa/sist-embarcados-e-prototipacao#readme",
   "dependencies": {
     "aedes": "^0.51.3",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "mqtt": "^5.14.1"
   }
 }
